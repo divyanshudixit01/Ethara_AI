@@ -85,6 +85,7 @@ NODE_ENV=development
 MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/team_task_manager
 JWT_SECRET=replace_with_secure_random_string
 CLIENT_URL=http://localhost:5173
+ALLOW_ADMIN_SIGNUP=false
 ```
 
 ### Backend API Endpoints
@@ -137,6 +138,7 @@ Deploy as **two Railway services** (recommended):
      - `MONGO_URI=<your_mongodb_uri>`
      - `JWT_SECRET=<strong_secret>`
      - `CLIENT_URL=<frontend_railway_url>`
+     - `ALLOW_ADMIN_SIGNUP=false`
 4. Add **Frontend Service** from the same repo:
    - Root directory: `frontend`
    - Build command: `npm run build`
@@ -152,6 +154,7 @@ Deploy as **two Railway services** (recommended):
 
 - Passwords hashed with `bcryptjs`
 - JWT auth + protected routes + role guards
+- Public signup defaults to member (admin signup disabled by default)
 - Input validation with `express-validator`
 - Security middleware (`helmet`, CORS config)
 - Centralized error handling
