@@ -3,6 +3,7 @@ import { LayoutDashboard, FolderKanban, ListTodo, LogOut, Menu, X, User } from "
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "../components/ThemeToggle";
+import UserMenu from "../components/UserMenu";
 
 const AppLayout = () => {
   const { user, logout } = useAuth();
@@ -50,15 +51,7 @@ const AppLayout = () => {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <div className="hidden h-8 w-[1px] bg-[var(--border-color)] md:block"></div>
-            <div className="hidden items-center gap-3 md:flex">
-              <div className="text-right">
-                <p className="text-sm font-semibold">{user?.name}</p>
-                <p className="text-xs text-[var(--text-secondary)] capitalize">{user?.role}</p>
-              </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-primary)] text-white">
-                <User size={20} />
-              </div>
-            </div>
+            <UserMenu />
           </div>
         </div>
       </header>

@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
@@ -13,24 +14,33 @@ const { notFound, errorHandler } = require("./middlewares/errorHandler");
 dotenv.config();
 
 const app = express();
+
+// Production-ready CORS configuration
 const allowedOrigins = (process.env.CLIENT_URL || "")
   .split(",")
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/$/, "")) // Remove trailing slashes
   .filter(Boolean);
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin) {
-      return callback(null, true);
-    }
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if the origin is allowed
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      return origin === allowedOrigin || origin.startsWith(allowedOrigin);
+    });
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
+    if (isAllowed || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      console.error(`Blocked by CORS: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
     }
-
-    return callback(new Error("CORS blocked: origin not allowed"));
   },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(helmet());
@@ -41,8 +51,14 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
+// Enhanced Health Check
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ message: "API is healthy" });
+  res.status(200).json({ 
+    status: "online",
+    timestamp: new Date().toISOString(),
+    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    uptime: process.uptime()
+  });
 });
 
 app.use("/api/auth", authRoutes);

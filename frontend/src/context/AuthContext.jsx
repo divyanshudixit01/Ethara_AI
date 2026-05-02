@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { api, setAuthToken } from "../api/api";
 
@@ -9,54 +9,88 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!token) {
+  const fetchMe = useCallback(async (authToken) => {
+    try {
+      setAuthToken(authToken);
+      const { data } = await api.get("/auth/me");
+      setUser(data.user);
+    } catch (error) {
+      console.error("Session verification failed", error);
+      localStorage.removeItem("token");
+      setToken(null);
+      setUser(null);
       setAuthToken(null);
+    } finally {
       setLoading(false);
-      return;
     }
+  }, []);
 
-    setAuthToken(token);
-    api
-      .get("/auth/me")
-      .then((res) => setUser(res.data.user))
-      .catch(() => {
-        localStorage.removeItem("token");
-        setToken(null);
-        setUser(null);
-      })
-      .finally(() => setLoading(false));
-  }, [token]);
+  useEffect(() => {
+    if (token) {
+      fetchMe(token);
+    } else {
+      setLoading(false);
+    }
+  }, [token, fetchMe]);
 
   const login = async (payload) => {
-    const { data } = await api.post("/auth/login", payload);
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem("token", data.token);
-    setAuthToken(data.token);
-    toast.success("Logged in successfully");
+    try {
+      const { data } = await api.post("/auth/login", payload);
+      const { token: newToken, user: newUser } = data;
+      
+      localStorage.setItem("token", newToken);
+      setAuthToken(newToken);
+      setToken(newToken);
+      setUser(newUser);
+      
+      toast.success(`Welcome back, ${newUser.name.split(' ')[0]}!`);
+      return true;
+    } catch (error) {
+      const message = error.response?.data?.message || "Invalid credentials. Please try again.";
+      toast.error(message);
+      return false;
+    }
   };
 
   const register = async (payload) => {
-    const { data } = await api.post("/auth/signup", payload);
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem("token", data.token);
-    setAuthToken(data.token);
-    toast.success("Account created");
+    try {
+      const { data } = await api.post("/auth/signup", payload);
+      const { token: newToken, user: newUser } = data;
+      
+      localStorage.setItem("token", newToken);
+      setAuthToken(newToken);
+      setToken(newToken);
+      setUser(newUser);
+      
+      toast.success("Account created successfully!");
+      return true;
+    } catch (error) {
+      const message = error.response?.data?.message || "Registration failed. Please try again.";
+      toast.error(message);
+      return false;
+    }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setToken(null);
     setUser(null);
     setAuthToken(null);
-    toast.success("Logged out");
-  };
+    toast.success("Signed out successfully");
+  }, []);
 
   const value = useMemo(
-    () => ({ user, token, loading, login, register, logout, isAuthenticated: !!token }),
-    [user, token, loading]
+    () => ({ 
+      user, 
+      token, 
+      loading, 
+      login, 
+      register, 
+      logout, 
+      isAuthenticated: !!token && !!user,
+      refreshUser: () => fetchMe(token)
+    }),
+    [user, token, loading, logout, fetchMe]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
