@@ -7,8 +7,6 @@ import {
   Menu,
   X,
   Settings,
-  ChevronDown,
-  Search,
   Bell,
 } from "lucide-react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
@@ -18,24 +16,18 @@ import ThemeToggle from "../components/ThemeToggle";
 const AppLayout = () => {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
 
-  // Close sidebar on route change (mobile)
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  // Close sidebar on Escape
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setSidebarOpen(false);
-        setSearchOpen(false);
-      }
+    const handleKey = (e) => {
+      if (e.key === "Escape") setSidebarOpen(false);
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
   const navItems = [
@@ -48,66 +40,167 @@ const AppLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)]">
-      {/* ====== SIDEBAR ====== */}
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)" }}>
+      {/* SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-[var(--sidebar-width)] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        style={{
+          position: "fixed",
+          inset: "0 auto 0 0",
+          zIndex: 40,
+          width: "var(--sidebar-w)",
+          backgroundColor: "var(--bg-secondary)",
+          borderRight: "1px solid var(--border)",
+          display: "flex",
+          flexDirection: "column",
+          transition: "transform 0.2s ease-out",
+          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+        }}
+        className="lg:!translate-x-0"
       >
         {/* Logo */}
-        <div className="h-[var(--header-height)] flex items-center px-5 border-b border-[var(--border-primary)]">
-          <Link to="/dashboard" className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-[var(--brand-primary)] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">E</span>
+        <div
+          style={{
+            height: "var(--header-h)",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 20px",
+            borderBottom: "1px solid var(--border)",
+          }}
+        >
+          <Link to="/dashboard" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div
+              style={{
+                height: 28,
+                width: 28,
+                borderRadius: 8,
+                backgroundColor: "var(--brand)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>E</span>
             </div>
-            <span className="text-sm font-semibold text-[var(--text-primary)]">
+            <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
               Ethara AI
             </span>
           </Link>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          <p className="px-3 mb-2 text-[0.6875rem] font-medium text-[var(--text-tertiary)] uppercase tracking-wider">
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: "16px 12px", overflowY: "auto" }}>
+          <p
+            style={{
+              padding: "0 12px",
+              marginBottom: 8,
+              fontSize: 11,
+              fontWeight: 500,
+              color: "var(--text-tertiary)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
             Navigation
           </p>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] text-[0.8125rem] font-medium transition-colors duration-150 ${
-                  isActive
-                    ? "bg-[var(--brand-muted)] text-[var(--brand-primary)]"
-                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]"
-                }`
-              }
-            >
-              <item.icon size={16} />
-              {item.label}
-            </NavLink>
-          ))}
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                style={({ isActive }) => ({
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "8px 12px",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  textDecoration: "none",
+                  transition: "background-color 0.15s, color 0.15s",
+                  backgroundColor: isActive ? "var(--brand-muted)" : "transparent",
+                  color: isActive ? "var(--brand)" : "var(--text-secondary)",
+                })}
+              >
+                <item.icon size={16} />
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
         </nav>
 
-        {/* User section */}
-        <div className="border-t border-[var(--border-primary)] p-3">
-          <div className="flex items-center gap-2.5 px-2 py-2 rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] transition-colors cursor-pointer">
-            <div className="h-8 w-8 rounded-full bg-[var(--brand-muted)] flex items-center justify-center text-xs font-semibold text-[var(--brand-primary)]">
+        {/* User */}
+        <div style={{ borderTop: "1px solid var(--border)", padding: 12 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "8px 8px",
+              borderRadius: "var(--radius-md)",
+            }}
+          >
+            <div
+              style={{
+                height: 32,
+                width: 32,
+                borderRadius: "50%",
+                backgroundColor: "var(--brand-muted)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 12,
+                fontWeight: 600,
+                color: "var(--brand)",
+              }}
+            >
               {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[0.8125rem] font-medium text-[var(--text-primary)] truncate">
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "var(--text-primary)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {user?.name}
               </p>
-              <p className="text-[0.6875rem] text-[var(--text-tertiary)] truncate">
+              <p
+                style={{
+                  fontSize: 11,
+                  color: "var(--text-tertiary)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {user?.email}
               </p>
             </div>
           </div>
           <button
             onClick={logout}
-            className="mt-1 flex w-full items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] text-[0.8125rem] font-medium text-[var(--danger)] hover:bg-[var(--danger-muted)] transition-colors"
+            style={{
+              marginTop: 4,
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              gap: 10,
+              padding: "8px 12px",
+              borderRadius: "var(--radius-md)",
+              fontSize: 13,
+              fontWeight: 500,
+              color: "var(--clr-danger)",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              transition: "background-color 0.15s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--clr-danger-bg)")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
           >
             <LogOut size={16} />
             Sign out
@@ -118,63 +211,126 @@ const AppLayout = () => {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/30 backdrop-blur-[2px] lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          className="lg:hidden"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 30,
+            backgroundColor: "rgba(0,0,0,0.3)",
+            backdropFilter: "blur(2px)",
+          }}
         />
       )}
 
-      {/* ====== MAIN AREA ====== */}
-      <div className="lg:pl-[var(--sidebar-width)]">
+      {/* MAIN AREA */}
+      <div className="lg:pl-[240px]">
         {/* Header */}
-        <header className="sticky top-0 z-20 h-[var(--header-height)] bg-[var(--bg-secondary)]/80 backdrop-blur-md border-b border-[var(--border-primary)] px-4 lg:px-6">
-          <div className="h-full flex items-center justify-between gap-4">
-            {/* Left side */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden h-8 w-8 flex items-center justify-center rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
-                aria-label="Toggle sidebar"
-              >
-                {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
-              </button>
+        <header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 20,
+            height: "var(--header-h)",
+            backgroundColor: "var(--bg-secondary)",
+            borderBottom: "1px solid var(--border)",
+            padding: "0 16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+          }}
+        >
+          {/* Left */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden"
+              style={{
+                height: 32,
+                width: 32,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "var(--radius-md)",
+                border: "none",
+                background: "transparent",
+                color: "var(--text-secondary)",
+                cursor: "pointer",
+              }}
+              aria-label="Toggle sidebar"
+            >
+              {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
 
-              {/* Breadcrumb-style page title */}
-              <div className="hidden sm:flex items-center gap-1.5 text-sm text-[var(--text-secondary)]">
-                <span className="text-[var(--text-tertiary)]">Ethara AI</span>
-                <span className="text-[var(--text-tertiary)]">/</span>
-                <span className="font-medium text-[var(--text-primary)]">
-                  {navItems.find((i) => i.to === location.pathname)?.label ||
-                    "Page"}
-                </span>
-              </div>
+            <div className="hidden sm:flex" style={{ alignItems: "center", gap: 6, fontSize: 14, color: "var(--text-secondary)" }}>
+              <span style={{ color: "var(--text-tertiary)" }}>Ethara AI</span>
+              <span style={{ color: "var(--text-tertiary)" }}>/</span>
+              <span style={{ fontWeight: 500, color: "var(--text-primary)" }}>
+                {navItems.find((i) => i.to === location.pathname)?.label || "Page"}
+              </span>
             </div>
+          </div>
 
-            {/* Right side */}
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
+          {/* Right */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <ThemeToggle />
+            <button
+              style={{
+                position: "relative",
+                height: 32,
+                width: 32,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "var(--radius-md)",
+                border: "none",
+                background: "transparent",
+                color: "var(--text-secondary)",
+                cursor: "pointer",
+              }}
+            >
+              <Bell size={16} />
+              <span
+                style={{
+                  position: "absolute",
+                  top: 6,
+                  right: 6,
+                  height: 6,
+                  width: 6,
+                  borderRadius: "50%",
+                  backgroundColor: "var(--brand)",
+                }}
+              />
+            </button>
 
-              <button className="relative h-8 w-8 flex items-center justify-center rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] transition-colors">
-                <Bell size={16} />
-                <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-[var(--brand-primary)]" />
-              </button>
-
-              <div className="hidden sm:block h-5 w-px bg-[var(--border-primary)] mx-1" />
-
-              <div className="hidden sm:flex items-center gap-2 pl-1">
-                <div className="h-7 w-7 rounded-full bg-[var(--brand-muted)] flex items-center justify-center text-xs font-semibold text-[var(--brand-primary)]">
-                  {user?.name?.charAt(0)?.toUpperCase() || "U"}
-                </div>
-                <span className="text-[0.8125rem] font-medium text-[var(--text-primary)]">
-                  {user?.name?.split(" ")[0]}
-                </span>
+            <div className="hidden sm:flex" style={{ alignItems: "center", gap: 8, paddingLeft: 8, borderLeft: "1px solid var(--border)", marginLeft: 4 }}>
+              <div
+                style={{
+                  height: 28,
+                  width: 28,
+                  borderRadius: "50%",
+                  backgroundColor: "var(--brand-muted)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "var(--brand)",
+                }}
+              >
+                {user?.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-primary)" }}>
+                {user?.name?.split(" ")[0]}
+              </span>
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-6 animate-fade-in">
-          <div className="max-w-6xl mx-auto">
+        <main style={{ padding: "16px" }} className="lg:p-6 eth-fade-in">
+          <div style={{ maxWidth: 1024, margin: "0 auto" }}>
             <Outlet />
           </div>
         </main>

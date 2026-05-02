@@ -1,32 +1,34 @@
-const Skeleton = ({ className = "", ...props }) => (
-  <div className={`skeleton ${className}`} {...props} />
+const Skeleton = ({ className = "", style = {}, ...props }) => (
+  <div className="eth-skeleton" style={style} {...props} />
 );
 
 export const CardSkeleton = () => (
-  <div className="card p-5 space-y-4">
-    <div className="flex items-center gap-3">
-      <Skeleton className="h-9 w-9 rounded-full" />
-      <div className="space-y-1.5 flex-1">
-        <Skeleton className="h-3.5 w-2/3" />
-        <Skeleton className="h-3 w-1/3" />
+  <div className="eth-card" style={{ padding: 20 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div className="eth-skeleton" style={{ height: 36, width: 36, borderRadius: "50%" }} />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
+          <div className="eth-skeleton" style={{ height: 14, width: "60%" }} />
+          <div className="eth-skeleton" style={{ height: 10, width: "35%" }} />
+        </div>
       </div>
-    </div>
-    <Skeleton className="h-16 w-full" />
-    <div className="flex justify-between items-center">
-      <Skeleton className="h-3 w-20" />
-      <Skeleton className="h-6 w-16 rounded-full" />
+      <div className="eth-skeleton" style={{ height: 60, width: "100%" }} />
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="eth-skeleton" style={{ height: 12, width: 80 }} />
+        <div className="eth-skeleton" style={{ height: 20, width: 60, borderRadius: 999 }} />
+      </div>
     </div>
   </div>
 );
 
 export const StatSkeleton = () => (
-  <div className="card p-5">
-    <div className="flex items-center justify-between">
-      <div className="space-y-2 flex-1">
-        <Skeleton className="h-3 w-20" />
-        <Skeleton className="h-7 w-12" />
+  <div className="eth-card" style={{ padding: 16 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className="eth-skeleton" style={{ height: 12, width: 80 }} />
+        <div className="eth-skeleton" style={{ height: 28, width: 48 }} />
       </div>
-      <Skeleton className="h-9 w-9 rounded-[var(--radius-md)]" />
+      <div className="eth-skeleton" style={{ height: 36, width: 36, borderRadius: "var(--radius-md)" }} />
     </div>
   </div>
 );

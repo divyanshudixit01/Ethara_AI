@@ -64,20 +64,18 @@ const DashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="space-y-1">
-          <Skeleton className="h-7 w-48" />
-          <Skeleton className="h-4 w-72" />
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <Skeleton style={{ height: 28, width: 192 }} />
+          <Skeleton style={{ height: 16, width: 288 }} />
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
           {[1, 2, 3, 4].map((i) => (
             <StatSkeleton key={i} />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
-            <CardSkeleton />
-          </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
+          <CardSkeleton />
           <CardSkeleton />
         </div>
       </div>
@@ -92,203 +90,131 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Greeting */}
       <div>
-        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
+        <h1 style={{ fontSize: "clamp(1.25rem, 2vw, 1.5rem)", fontWeight: 600, letterSpacing: "-0.025em" }}>
           {getTimeOfDay()}, {user?.name?.split(" ")[0]}
         </h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+        <p style={{ fontSize: 14, color: "var(--text-secondary)", marginTop: 2 }}>
           Here&apos;s what&apos;s happening with your tasks today.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 stagger-children">
+      <div className="eth-stagger" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
         {[
-          {
-            label: "Total tasks",
-            value: stats.total,
-            icon: ListTodo,
-            color: "var(--info)",
-            bg: "var(--info-muted)",
-          },
-          {
-            label: "Completed",
-            value: stats.done,
-            icon: CheckCircle2,
-            color: "var(--success)",
-            bg: "var(--success-muted)",
-          },
-          {
-            label: "In progress",
-            value: stats.inProgress,
-            icon: Clock,
-            color: "var(--warning)",
-            bg: "var(--warning-muted)",
-          },
-          {
-            label: "Overdue",
-            value: stats.overdue,
-            icon: AlertCircle,
-            color: "var(--danger)",
-            bg: "var(--danger-muted)",
-          },
+          { label: "Total tasks", value: stats.total, icon: ListTodo, color: "var(--clr-info)", bg: "var(--clr-info-bg)" },
+          { label: "Completed", value: stats.done, icon: CheckCircle2, color: "var(--clr-success)", bg: "var(--clr-success-bg)" },
+          { label: "In progress", value: stats.inProgress, icon: Clock, color: "var(--clr-warning)", bg: "var(--clr-warning-bg)" },
+          { label: "Overdue", value: stats.overdue, icon: AlertCircle, color: "var(--clr-danger)", bg: "var(--clr-danger-bg)" },
         ].map((stat) => (
-          <div key={stat.label} className="card p-4">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-[var(--text-secondary)]">
-                {stat.label}
-              </span>
-              <div
-                className="h-8 w-8 rounded-[var(--radius-md)] flex items-center justify-center"
-                style={{ backgroundColor: stat.bg }}
-              >
+          <div key={stat.label} className="eth-card" style={{ padding: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{stat.label}</span>
+              <div style={{ height: 32, width: 32, borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: stat.bg }}>
                 <stat.icon size={15} style={{ color: stat.color }} />
               </div>
             </div>
-            <span className="text-2xl font-semibold tracking-tight">
-              {stat.value}
-            </span>
+            <span style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-0.025em" }}>{stat.value}</span>
           </div>
         ))}
       </div>
 
       {/* Progress + Upcoming */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div className="lg:grid-cols-5" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }}>
         {/* Progress card */}
-        <div className="lg:col-span-2 card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold">Completion rate</h3>
-            <div className="badge badge-brand">
-              <TrendingUp size={11} />
-              {completionRate}%
+        <div className="eth-card lg:col-span-2" style={{ padding: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>Completion rate</h3>
+            <div className="eth-badge eth-badge-brand">
+              <TrendingUp size={11} /> {completionRate}%
             </div>
           </div>
 
           {/* Circular progress */}
-          <div className="flex items-center justify-center py-4">
-            <div className="relative h-32 w-32">
-              <svg className="h-32 w-32 -rotate-90" viewBox="0 0 120 120">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "16px 0" }}>
+            <div style={{ position: "relative", height: 128, width: 128 }}>
+              <svg style={{ height: 128, width: 128, transform: "rotate(-90deg)" }} viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--bg-tertiary)" strokeWidth="8" />
                 <circle
-                  cx="60"
-                  cy="60"
-                  r="52"
-                  fill="none"
-                  stroke="var(--bg-tertiary)"
-                  strokeWidth="8"
-                />
-                <circle
-                  cx="60"
-                  cy="60"
-                  r="52"
-                  fill="none"
-                  stroke="var(--brand-primary)"
-                  strokeWidth="8"
-                  strokeLinecap="round"
+                  cx="60" cy="60" r="52" fill="none" stroke="var(--brand)" strokeWidth="8" strokeLinecap="round"
                   strokeDasharray={`${2 * Math.PI * 52}`}
                   strokeDashoffset={`${2 * Math.PI * 52 * (1 - completionRate / 100)}`}
                   style={{ transition: "stroke-dashoffset 0.8s ease-out" }}
                 />
               </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold tracking-tight">
-                  {completionRate}%
-                </span>
-                <span className="text-[0.6875rem] text-[var(--text-tertiary)]">
-                  complete
-                </span>
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em" }}>{completionRate}%</span>
+                <span style={{ fontSize: 11, color: "var(--text-tertiary)" }}>complete</span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[var(--border-primary)]">
-            <div className="text-center">
-              <p className="text-lg font-semibold">{stats.done}</p>
-              <p className="text-[0.6875rem] text-[var(--text-tertiary)]">
-                Done
-              </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: 18, fontWeight: 600 }}>{stats.done}</p>
+              <p style={{ fontSize: 11, color: "var(--text-tertiary)" }}>Done</p>
             </div>
-            <div className="text-center">
-              <p className="text-lg font-semibold">{stats.pending}</p>
-              <p className="text-[0.6875rem] text-[var(--text-tertiary)]">
-                Remaining
-              </p>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: 18, fontWeight: 600 }}>{stats.pending}</p>
+              <p style={{ fontSize: 11, color: "var(--text-tertiary)" }}>Remaining</p>
             </div>
           </div>
         </div>
 
         {/* Recent tasks */}
-        <div className="lg:col-span-3 card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold">Recent tasks</h3>
-            <Link
-              to="/tasks"
-              className="text-xs font-medium text-[var(--brand-primary)] hover:underline flex items-center gap-1"
-            >
-              View all
-              <ArrowUpRight size={12} />
+        <div className="eth-card lg:col-span-3" style={{ padding: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>Recent tasks</h3>
+            <Link to="/tasks" style={{ fontSize: 12, fontWeight: 500, color: "var(--brand)", display: "flex", alignItems: "center", gap: 4, textDecoration: "none" }}>
+              View all <ArrowUpRight size={12} />
             </Link>
           </div>
 
           {recentTasks.length > 0 ? (
-            <div className="space-y-1">
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               {recentTasks.map((task) => (
                 <div
                   key={task._id}
-                  className="flex items-center gap-3 p-2.5 rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] transition-colors group"
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12, padding: 10,
+                    borderRadius: "var(--radius-md)", transition: "background-color 0.15s",
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--bg-tertiary)"}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                 >
                   <div
-                    className={`h-2 w-2 rounded-full shrink-0 ${
-                      task.status === "done"
-                        ? "bg-[var(--success)]"
-                        : task.status === "in-progress"
-                          ? "bg-[var(--warning)]"
-                          : "bg-[var(--text-tertiary)]"
-                    }`}
+                    style={{
+                      height: 8, width: 8, borderRadius: "50%", flexShrink: 0,
+                      backgroundColor: task.status === "done" ? "var(--clr-success)" : task.status === "in-progress" ? "var(--clr-warning)" : "var(--text-tertiary)"
+                    }}
                   />
-                  <div className="flex-1 min-w-0">
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <p
-                      className={`text-sm font-medium truncate ${
-                        task.status === "done"
-                          ? "line-through text-[var(--text-tertiary)]"
-                          : ""
-                      }`}
+                      style={{
+                        fontSize: 14, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                        color: task.status === "done" ? "var(--text-tertiary)" : "inherit",
+                        textDecoration: task.status === "done" ? "line-through" : "none"
+                      }}
                     >
                       {task.title}
                     </p>
-                    <p className="text-[0.6875rem] text-[var(--text-tertiary)] truncate">
+                    <p style={{ fontSize: 11, color: "var(--text-tertiary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {task.projectId?.name || "No project"}
                     </p>
                   </div>
-                  <span
-                    className={`badge shrink-0 ${
-                      task.status === "done"
-                        ? "badge-success"
-                        : task.status === "in-progress"
-                          ? "badge-warning"
-                          : "badge-info"
-                    }`}
-                  >
+                  <span className={`eth-badge flex-shrink-0 ${task.status === "done" ? "eth-badge-success" : task.status === "in-progress" ? "eth-badge-warning" : "eth-badge-info"}`}>
                     {task.status === "in-progress" ? "Active" : task.status === "done" ? "Done" : "To do"}
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-8 text-center">
-              <ListTodo
-                size={32}
-                className="mx-auto mb-2 text-[var(--text-tertiary)]"
-              />
-              <p className="text-sm text-[var(--text-secondary)]">
-                No tasks yet.{" "}
-                <Link
-                  to="/tasks"
-                  className="text-[var(--brand-primary)] hover:underline"
-                >
-                  Create one
-                </Link>
+            <div style={{ padding: "32px 0", textAlign: "center" }}>
+              <ListTodo size={32} style={{ margin: "0 auto 8px", color: "var(--text-tertiary)" }} />
+              <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+                No tasks yet. <Link to="/tasks" style={{ color: "var(--brand)", textDecoration: "none" }}>Create one</Link>
               </p>
             </div>
           )}
@@ -297,45 +223,25 @@ const DashboardPage = () => {
 
       {/* Upcoming deadlines */}
       {upcomingDeadlines.length > 0 && (
-        <div className="card p-5">
-          <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
-            <Calendar size={15} className="text-[var(--text-secondary)]" />
+        <div className="eth-card" style={{ padding: 20 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <Calendar size={15} style={{ color: "var(--text-secondary)" }} />
             Upcoming deadlines
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
             {upcomingDeadlines.map((task) => {
-              const daysLeft = Math.ceil(
-                (new Date(task.dueDate) - new Date()) / (1000 * 60 * 60 * 24)
-              );
+              const daysLeft = Math.ceil((new Date(task.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
               return (
-                <div
-                  key={task._id}
-                  className="p-3 rounded-[var(--radius-md)] border border-[var(--border-primary)] bg-[var(--bg-primary)]"
-                >
-                  <p className="text-sm font-medium truncate mb-1">
+                <div key={task._id} style={{ padding: 12, borderRadius: "var(--radius-md)", border: "1px solid var(--border)", backgroundColor: "var(--bg-primary)" }}>
+                  <p style={{ fontSize: 14, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: 4 }}>
                     {task.title}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[0.6875rem] text-[var(--text-tertiary)]">
-                      {new Date(task.dueDate).toLocaleDateString(undefined, {
-                        month: "short",
-                        day: "numeric",
-                      })}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 11, color: "var(--text-tertiary)" }}>
+                      {new Date(task.dueDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                     </span>
-                    <span
-                      className={`text-[0.6875rem] font-medium ${
-                        daysLeft <= 2
-                          ? "text-[var(--danger)]"
-                          : daysLeft <= 5
-                            ? "text-[var(--warning)]"
-                            : "text-[var(--text-secondary)]"
-                      }`}
-                    >
-                      {daysLeft === 0
-                        ? "Today"
-                        : daysLeft === 1
-                          ? "Tomorrow"
-                          : `${daysLeft} days`}
+                    <span style={{ fontSize: 11, fontWeight: 500, color: daysLeft <= 2 ? "var(--clr-danger)" : daysLeft <= 5 ? "var(--clr-warning)" : "var(--text-secondary)" }}>
+                      {daysLeft <= 0 ? "Today" : daysLeft === 1 ? "Tomorrow" : `${daysLeft} days`}
                     </span>
                   </div>
                 </div>
@@ -344,6 +250,13 @@ const DashboardPage = () => {
           </div>
         </div>
       )}
+      <style>{`
+        @media (min-width: 1024px) {
+          .lg\\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+          .lg\\:col-span-2 { grid-column: span 2 / span 2 !important; }
+          .lg\\:col-span-3 { grid-column: span 3 / span 3 !important; }
+        }
+      `}</style>
     </div>
   );
 };

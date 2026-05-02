@@ -12,19 +12,18 @@ const RegisterPage = () => {
   const { register } = useAuth();
 
   const passwordStrength = (pw) => {
-    if (!pw) return { label: "", color: "", width: "0%" };
-    if (pw.length < 6) return { label: "Too short", color: "var(--danger)", width: "20%" };
+    if (!pw) return { label: "", color: "transparent", width: "0%" };
+    if (pw.length < 6) return { label: "Too short", color: "var(--clr-danger)", width: "20%" };
     let score = 0;
     if (pw.length >= 8) score++;
     if (/[A-Z]/.test(pw)) score++;
     if (/[0-9]/.test(pw)) score++;
     if (/[^A-Za-z0-9]/.test(pw)) score++;
-    if (score <= 1) return { label: "Weak", color: "var(--danger)", width: "40%" };
-    if (score === 2) return { label: "Fair", color: "var(--warning)", width: "60%" };
-    if (score === 3) return { label: "Good", color: "var(--info)", width: "80%" };
-    return { label: "Strong", color: "var(--success)", width: "100%" };
+    if (score <= 1) return { label: "Weak", color: "var(--clr-danger)", width: "40%" };
+    if (score === 2) return { label: "Fair", color: "var(--clr-warning)", width: "60%" };
+    if (score === 3) return { label: "Good", color: "var(--clr-info)", width: "80%" };
+    return { label: "Strong", color: "var(--clr-success)", width: "100%" };
   };
-
   const strength = passwordStrength(form.password);
 
   const handleSubmit = async (e) => {
@@ -39,179 +38,123 @@ const RegisterPage = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen flex bg-[var(--bg-primary)]">
-      {/* Left — Visual panel (desktop only) */}
-      <div className="hidden lg:flex flex-1 bg-[var(--bg-secondary)] items-center justify-center p-12 relative overflow-hidden border-r border-[var(--border-primary)]">
-        <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full border border-[var(--border-primary)]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[var(--brand-muted)]" />
+  const inputStyle = {
+    width: "100%",
+    backgroundColor: "var(--bg-primary)",
+    border: "1px solid var(--border)",
+    borderRadius: "var(--radius-md)",
+    padding: "10px 14px 10px 36px",
+    fontSize: 14,
+    fontFamily: "inherit",
+    color: "var(--text-primary)",
+    outline: "none",
+  };
+  const labelStyle = { fontSize: 13, fontWeight: 500, display: "block", marginBottom: 6 };
 
-        <div className="relative z-10 max-w-md">
-          <h2 className="text-2xl font-semibold mb-4">
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", backgroundColor: "var(--bg-primary)" }}>
+      {/* Visual side */}
+      <div
+        className="hidden lg:flex"
+        style={{
+          flex: 1,
+          backgroundColor: "var(--bg-secondary)",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 48,
+          position: "relative",
+          overflow: "hidden",
+          borderRight: "1px solid var(--border)",
+        }}
+      >
+        <div style={{ position: "absolute", top: "-15%", left: "-10%", width: 400, height: 400, borderRadius: "50%", border: "1px solid var(--border)" }} />
+        <div style={{ position: "absolute", bottom: "-10%", right: "-10%", width: 300, height: 300, borderRadius: "50%", backgroundColor: "var(--brand-muted)" }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 400 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 16 }}>
             Start managing your projects today
           </h2>
-          <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-8">
-            Join teams that use Ethara AI to stay organized, meet deadlines, and
-            build great products together.
+          <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.7, marginBottom: 32 }}>
+            Join teams that use Ethara AI to stay organized, meet deadlines, and build great products together.
           </p>
-          <div className="space-y-3">
-            {[
-              "Create projects and invite team members",
-              "Assign tasks with deadlines and priorities",
-              "Track progress with real-time analytics",
-            ].map((text) => (
-              <div key={text} className="flex items-start gap-2.5">
-                <div className="h-5 w-5 rounded-full bg-[var(--brand-muted)] flex items-center justify-center shrink-0 mt-0.5">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <path d="M2 5L4 7L8 3" stroke="var(--brand-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {["Create projects and invite team members", "Assign tasks with deadlines and priorities", "Track progress with real-time analytics"].map((text) => (
+              <div key={text} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                <div style={{ height: 20, width: 20, borderRadius: "50%", backgroundColor: "var(--brand-muted)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4 7L8 3" stroke="var(--brand)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
-                <span className="text-sm text-[var(--text-secondary)]">{text}</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{text}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Right — Form */}
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-12">
-        <div className="w-full max-w-sm mx-auto">
-          <Link to="/" className="flex items-center gap-2 mb-10">
-            <div className="h-7 w-7 rounded-lg bg-[var(--brand-primary)] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">E</span>
+      {/* Form side */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "48px 32px" }}>
+        <div style={{ width: "100%", maxWidth: 360, margin: "0 auto" }}>
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 40 }}>
+            <div style={{ height: 28, width: 28, borderRadius: 8, backgroundColor: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>E</span>
             </div>
-            <span className="text-sm font-semibold">Ethara AI</span>
+            <span style={{ fontSize: 14, fontWeight: 600 }}>Ethara AI</span>
           </Link>
 
-          <h1 className="text-xl font-semibold tracking-tight mb-1">
-            Create your account
-          </h1>
-          <p className="text-sm text-[var(--text-secondary)] mb-8">
-            Get started for free. No credit card required.
-          </p>
+          <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.025em", marginBottom: 4 }}>Create your account</h1>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 32 }}>Get started for free. No credit card required.</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
-            <div className="space-y-1.5">
-              <label htmlFor="reg-name" className="text-[0.8125rem] font-medium">
-                Full name
-              </label>
-              <div className="relative">
-                <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
-                <input
-                  id="reg-name"
-                  type="text"
-                  placeholder="Jane Smith"
-                  required
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="input-base pl-9"
-                  autoComplete="name"
-                />
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: 16 }}>
+              <label htmlFor="reg-name" style={labelStyle}>Full name</label>
+              <div style={{ position: "relative" }}>
+                <User size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--text-tertiary)" }} />
+                <input id="reg-name" type="text" placeholder="Jane Smith" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} autoComplete="name" />
               </div>
             </div>
 
-            {/* Email */}
-            <div className="space-y-1.5">
-              <label htmlFor="reg-email" className="text-[0.8125rem] font-medium">
-                Work email
-              </label>
-              <div className="relative">
-                <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
-                <input
-                  id="reg-email"
-                  type="email"
-                  placeholder="jane@company.com"
-                  required
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="input-base pl-9"
-                  autoComplete="email"
-                />
+            <div style={{ marginBottom: 16 }}>
+              <label htmlFor="reg-email" style={labelStyle}>Work email</label>
+              <div style={{ position: "relative" }}>
+                <Mail size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--text-tertiary)" }} />
+                <input id="reg-email" type="email" placeholder="jane@company.com" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={inputStyle} autoComplete="email" />
               </div>
             </div>
 
-            {/* Password */}
-            <div className="space-y-1.5">
-              <label htmlFor="reg-password" className="text-[0.8125rem] font-medium">
-                Password
-              </label>
-              <div className="relative">
-                <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
-                <input
-                  id="reg-password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Min 6 characters"
-                  required
-                  minLength={6}
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className="input-base pl-9 pr-9"
-                  autoComplete="new-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
-                  tabIndex={-1}
-                >
+            <div style={{ marginBottom: 16 }}>
+              <label htmlFor="reg-password" style={labelStyle}>Password</label>
+              <div style={{ position: "relative" }}>
+                <Lock size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--text-tertiary)" }} />
+                <input id="reg-password" type={showPassword ? "text" : "password"} placeholder="Min 6 characters" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} style={{ ...inputStyle, paddingRight: 36 }} autoComplete="new-password" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "var(--text-tertiary)", cursor: "pointer" }} tabIndex={-1}>
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
-
-              {/* Password strength */}
               {form.password && (
-                <div className="space-y-1">
-                  <div className="h-1 w-full bg-[var(--bg-tertiary)] rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-300"
-                      style={{ width: strength.width, backgroundColor: strength.color }}
-                    />
+                <div style={{ marginTop: 6 }}>
+                  <div style={{ height: 4, width: "100%", backgroundColor: "var(--bg-tertiary)", borderRadius: 999, overflow: "hidden" }}>
+                    <div style={{ height: "100%", borderRadius: 999, transition: "width 0.3s", width: strength.width, backgroundColor: strength.color }} />
                   </div>
-                  <p className="text-[0.6875rem]" style={{ color: strength.color }}>
-                    {strength.label}
-                  </p>
+                  <p style={{ fontSize: 11, marginTop: 4, color: strength.color }}>{strength.label}</p>
                 </div>
               )}
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary w-full py-2.5"
-            >
-              {loading ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Creating account...
-                </>
-              ) : (
-                <>
-                  Create account
-                  <ArrowRight size={14} />
-                </>
-              )}
+            <button type="submit" disabled={loading} className="eth-btn eth-btn-primary" style={{ width: "100%", padding: "10px 0", marginTop: 8 }}>
+              {loading ? (<><Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> Creating account...</>) : (<>Create account <ArrowRight size={14} /></>)}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
+          <p style={{ marginTop: 24, textAlign: "center", fontSize: 14, color: "var(--text-secondary)" }}>
             Already have an account?{" "}
-            <Link to="/login" className="text-[var(--brand-primary)] font-medium hover:underline">
-              Sign in
-            </Link>
+            <Link to="/login" style={{ color: "var(--brand)", fontWeight: 500 }}>Sign in</Link>
           </p>
-
-          <p className="mt-4 text-center text-[0.6875rem] text-[var(--text-tertiary)]">
-            By creating an account, you agree to our{" "}
-            <a href="#" className="underline">Terms</a> and{" "}
-            <a href="#" className="underline">Privacy Policy</a>.
+          <p style={{ marginTop: 16, textAlign: "center", fontSize: 11, color: "var(--text-tertiary)" }}>
+            By creating an account, you agree to our <a href="#" style={{ textDecoration: "underline" }}>Terms</a> and <a href="#" style={{ textDecoration: "underline" }}>Privacy Policy</a>.
           </p>
         </div>
       </div>
 
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 50 }}><ThemeToggle /></div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 };

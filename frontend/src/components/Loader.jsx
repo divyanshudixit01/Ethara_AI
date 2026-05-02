@@ -1,12 +1,24 @@
 import { Loader2 } from "lucide-react";
 
 const Loader = ({ text = "Loading..." }) => (
-  <div className="flex min-h-[200px] w-full flex-col items-center justify-center gap-3">
+  <div
+    style={{
+      display: "flex",
+      minHeight: 200,
+      width: "100%",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 12,
+    }}
+  >
     <Loader2
-      className="h-6 w-6 animate-spin text-[var(--brand-primary)]"
+      size={24}
       strokeWidth={2}
+      style={{ animation: "spin 1s linear infinite", color: "var(--brand)" }}
     />
-    <p className="text-sm text-[var(--text-secondary)]">{text}</p>
+    <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{text}</p>
+    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
   </div>
 );
 

@@ -8,51 +8,93 @@ const Modal = ({ isOpen, onClose, title, children, size = "md" }) => {
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
+    return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
 
-  // Close on Escape
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKey = (e) => {
       if (e.key === "Escape" && isOpen) onClose();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  const maxWidthClass = size === "lg" ? "max-w-2xl" : size === "sm" ? "max-w-md" : "max-w-lg";
+  const maxW = size === "lg" ? 672 : size === "sm" ? 400 : 512;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 100,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 16,
+      }}
+    >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-[3px] animate-fade-in"
         onClick={onClose}
+        className="eth-fade-in"
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundColor: "rgba(0,0,0,0.4)",
+          backdropFilter: "blur(3px)",
+        }}
       />
 
       {/* Modal */}
       <div
-        className={`relative w-full ${maxWidthClass} bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-xl)] shadow-2xl animate-scale-in overflow-hidden`}
+        className="eth-scale-in"
+        style={{
+          position: "relative",
+          width: "100%",
+          maxWidth: maxW,
+          backgroundColor: "var(--bg-secondary)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--radius-xl)",
+          boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+          overflow: "hidden",
+        }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-primary)]">
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "16px 24px",
+            borderBottom: "1px solid var(--border)",
+          }}
+        >
+          <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-primary)" }}>
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] transition-colors"
+            style={{
+              height: 32,
+              width: 32,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "var(--radius-md)",
+              border: "none",
+              background: "transparent",
+              color: "var(--text-secondary)",
+              cursor: "pointer",
+            }}
           >
             <X size={16} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+        <div style={{ padding: 24, maxHeight: "calc(100vh - 200px)", overflowY: "auto" }}>
           {children}
         </div>
       </div>
