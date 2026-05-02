@@ -18,7 +18,6 @@ router
   .route("/")
   .get(getTasks)
   .post(
-    authorize("admin"),
     [
       body("title").notEmpty().withMessage("Task title is required"),
       body("assignedTo").isMongoId().withMessage("Valid assignee is required"),
