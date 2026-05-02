@@ -1,513 +1,327 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
   LayoutDashboard,
+  ListTodo,
   Users,
-  Shield,
-  Zap,
   BarChart3,
-  FolderKanban,
-  Moon,
-  Sun,
+  Menu,
+  X,
+  Sparkles,
+  Zap,
+  Shield,
+  Globe
 } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
+import ThemeToggle from "../components/ThemeToggle";
+import { useAuth } from "../context/AuthContext";
 
 const LandingPage = () => {
-  const { theme, toggleTheme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const features = [
-    { icon: LayoutDashboard, title: "Real-time Dashboard", desc: "Track task progress, team velocity, and project health — all in one view." },
-    { icon: FolderKanban, title: "Project Organization", desc: "Group tasks into projects with dedicated teams and clear ownership." },
-    { icon: Users, title: "Role-based Access", desc: "Admin and member roles with fine-grained permissions for every action." },
-    { icon: Shield, title: "Secure by Default", desc: "JWT auth, encrypted passwords, and input validation on every request." },
-    { icon: Zap, title: "Fast & Responsive", desc: "Built with React and optimized for instant interactions on any device." },
-    { icon: BarChart3, title: "Progress Analytics", desc: "Completion rates, overdue tracking, and filtering to spot bottlenecks." },
+    {
+      icon: ListTodo,
+      title: "Smart Task Management",
+      description: "Organize, prioritize, and track your work effortlessly with an intuitive pipeline interface.",
+    },
+    {
+      icon: Users,
+      title: "Seamless Collaboration",
+      description: "Work together in real-time. Assign tasks, share updates, and keep everyone aligned.",
+    },
+    {
+      icon: LayoutDashboard,
+      title: "Custom Workspaces",
+      description: "Tailor your dashboard to fit your exact workflow with flexible project structures.",
+    },
+    {
+      icon: BarChart3,
+      title: "Advanced Analytics",
+      description: "Gain deep insights into team velocity, completion rates, and upcoming bottlenecks.",
+    },
   ];
 
-  const steps = [
-    { num: "01", title: "Create your account", desc: "Sign up in seconds — no credit card needed." },
-    { num: "02", title: "Set up projects", desc: "Create projects and invite your team members." },
-    { num: "03", title: "Assign & track tasks", desc: "Create tasks, set deadlines, and monitor progress." },
-  ];
+  const glassStyle = {
+    backgroundColor: "color-mix(in srgb, var(--bg-secondary) 70%, transparent)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid color-mix(in srgb, var(--border) 50%, transparent)",
+    boxShadow: "0 8px 32px -4px rgba(0,0,0,0.03)",
+  };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      {/* NAV */}
-      <nav
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-primary)", position: "relative", overflow: "hidden" }}>
+      
+      {/* GLOBAL AMBIENT BLOBS */}
+      <div style={{ position: "absolute", top: "-10%", left: "-10%", width: "50vw", height: "50vw", background: "radial-gradient(circle, var(--brand-subtle) 0%, transparent 60%)", opacity: 0.15, filter: "blur(100px)", pointerEvents: "none", zIndex: 0 }} />
+      <div style={{ position: "absolute", top: "30%", right: "-10%", width: "60vw", height: "60vw", background: "radial-gradient(circle, var(--info-muted) 0%, transparent 60%)", opacity: 0.1, filter: "blur(120px)", pointerEvents: "none", zIndex: 0 }} />
+      <div style={{ position: "absolute", bottom: "-10%", left: "10%", width: "40vw", height: "40vw", background: "radial-gradient(circle, var(--brand) 0%, transparent 60%)", opacity: 0.05, filter: "blur(100px)", pointerEvents: "none", zIndex: 0 }} />
+
+      {/* HEADER (Floating Glass) */}
+      <header
         style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          backgroundColor: "var(--bg-primary)",
-          borderBottom: "1px solid var(--border)",
+          position: "fixed", top: 16, left: 16, right: 16, zIndex: 50,
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          backgroundColor: isScrolled ? "color-mix(in srgb, var(--bg-secondary) 85%, transparent)" : "color-mix(in srgb, var(--bg-primary) 50%, transparent)",
+          backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+          border: "1px solid color-mix(in srgb, var(--border) 40%, transparent)",
+          boxShadow: isScrolled ? "0 8px 32px -4px rgba(0,0,0,0.05)" : "none",
+          borderRadius: 9999,
+          maxWidth: 1200,
+          margin: "0 auto",
         }}
       >
-        <div
-          style={{
-            maxWidth: 960,
-            margin: "0 auto",
-            padding: "0 24px",
-            height: 56,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                height: 28,
-                width: 28,
-                borderRadius: 8,
-                backgroundColor: "var(--brand)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>E</span>
-            </div>
-            <span style={{ fontSize: 14, fontWeight: 600 }}>Ethara AI</span>
-          </Link>
-
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 64, padding: "0 24px" }}>
+          {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button
-              onClick={toggleTheme}
-              style={{
-                height: 32,
-                width: 32,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "var(--radius-md)",
-                border: "none",
-                background: "transparent",
-                color: "var(--text-secondary)",
-                cursor: "pointer",
-              }}
-            >
-              {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
-            </button>
-            <Link
-              to="/login"
-              style={{
-                fontSize: 14,
-                fontWeight: 500,
-                color: "var(--text-secondary)",
-              }}
-            >
-              Log in
-            </Link>
-            <Link to="/register" className="eth-btn eth-btn-primary eth-btn-sm">
-              Get started <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* HERO */}
-      <section style={{ position: "relative", overflow: "hidden" }}>
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 600,
-            height: 400,
-            borderRadius: "50%",
-            background: "var(--brand)",
-            opacity: 0.05,
-            filter: "blur(100px)",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            maxWidth: 680,
-            margin: "0 auto",
-            padding: "80px 24px 64px",
-            textAlign: "center",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              marginBottom: 24,
-              padding: "4px 12px",
-              borderRadius: 999,
-              border: "1px solid var(--border)",
-              backgroundColor: "var(--bg-secondary)",
-              fontSize: 12,
-              fontWeight: 500,
-              color: "var(--text-secondary)",
-            }}
-          >
-            <span
-              className="eth-pulse"
-              style={{
-                height: 6,
-                width: 6,
-                borderRadius: "50%",
-                backgroundColor: "var(--clr-success)",
-                display: "inline-block",
-              }}
-            />
-            Now in public beta
+            <div style={{ height: 32, width: 32, borderRadius: 10, background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px var(--brand-muted)" }}>
+              <Sparkles size={16} color="#fff" />
+            </div>
+            <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.03em" }}>Ethara AI</span>
           </div>
 
-          <h1
-            style={{
-              fontSize: "clamp(2rem, 5vw, 3rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.15,
-              marginBottom: 20,
-            }}
-          >
-            Ship faster with
-            <br />
-            <span style={{ color: "var(--brand)" }}>organized teamwork</span>
-          </h1>
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex" style={{ alignItems: "center", gap: 32 }}>
+            {["Features", "Solutions", "Pricing"].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} style={{ fontSize: 14, fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-secondary)"}>
+                {item}
+              </a>
+            ))}
+          </nav>
 
-          <p
-            style={{
-              fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
-              color: "var(--text-secondary)",
-              maxWidth: 520,
-              margin: "0 auto 32px",
-              lineHeight: 1.7,
-            }}
-          >
-            Ethara AI helps your team manage projects, track tasks, and
-            collaborate effortlessly. Simple, fast, and built for teams that care
-            about getting things done.
-          </p>
-
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: 12,
-              marginBottom: 32,
-            }}
-          >
-            <Link to="/register" className="eth-btn eth-btn-primary eth-btn-lg">
-              Start for free <ArrowRight size={16} />
-            </Link>
-            <Link to="/login" className="eth-btn eth-btn-secondary eth-btn-lg">
-              Sign in to your workspace
-            </Link>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: "16px 24px",
-              fontSize: 12,
-              color: "var(--text-tertiary)",
-            }}
-          >
-            {["No credit card required", "Free for small teams", "Set up in 2 minutes"].map(
-              (t) => (
-                <span key={t} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <CheckCircle2 size={13} style={{ color: "var(--clr-success)" }} />
-                  {t}
-                </span>
-              )
+          {/* Actions */}
+          <div className="hidden md:flex" style={{ alignItems: "center", gap: 16 }}>
+            <ThemeToggle />
+            {user ? (
+              <Link to="/dashboard" className="eth-btn eth-btn-primary" style={{ borderRadius: 9999, padding: "10px 24px" }}>
+                Dashboard <ArrowRight size={16} style={{ marginLeft: 4 }} />
+              </Link>
+            ) : (
+              <>
+                <Link to="/login" style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)", textDecoration: "none" }}>Log in</Link>
+                <Link to="/register" className="eth-btn eth-btn-primary" style={{ borderRadius: 9999, padding: "10px 24px", boxShadow: "0 4px 14px 0 rgba(99, 102, 241, 0.39)" }}>Start for free</Link>
+              </>
             )}
           </div>
-        </div>
-      </section>
 
-      {/* DASHBOARD PREVIEW */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 24px 80px" }}>
-        <div
-          className="eth-card"
-          style={{ padding: 16 }}
-        >
-          <div
-            style={{
-              borderRadius: "var(--radius-md)",
-              backgroundColor: "var(--bg-primary)",
-              border: "1px solid var(--border)",
-              padding: 20,
-            }}
-          >
-            {/* Mock stats */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-                gap: 12,
-                marginBottom: 16,
+          {/* Mobile toggle */}
+          <div className="md:hidden" style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <ThemeToggle />
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: "none", border: "none", color: "var(--text-primary)", cursor: "pointer" }}>
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden" style={{ padding: "16px 24px", borderTop: "1px solid color-mix(in srgb, var(--border) 50%, transparent)", display: "flex", flexDirection: "column", gap: 16 }}>
+            {["Features", "Solutions", "Pricing"].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} style={{ fontSize: 16, fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none" }}>{item}</a>
+            ))}
+            <div style={{ height: 1, backgroundColor: "color-mix(in srgb, var(--border) 50%, transparent)", margin: "8px 0" }} />
+            {user ? (
+              <Link to="/dashboard" className="eth-btn eth-btn-primary" style={{ width: "100%", justifyContent: "center", borderRadius: 9999, padding: "12px" }}>Dashboard</Link>
+            ) : (
+              <>
+                <Link to="/login" style={{ fontSize: 16, fontWeight: 600, color: "var(--text-primary)", textDecoration: "none", padding: "8px 0" }}>Log in</Link>
+                <Link to="/register" className="eth-btn eth-btn-primary" style={{ width: "100%", justifyContent: "center", borderRadius: 9999, padding: "12px", boxShadow: "0 4px 14px 0 rgba(99, 102, 241, 0.39)" }}>Start for free</Link>
+              </>
+            )}
+          </div>
+        )}
+      </header>
+
+      {/* MAIN CONTENT */}
+      <main style={{ paddingTop: 140, position: "relative", zIndex: 10 }}>
+        
+        {/* HERO SECTION */}
+        <section style={{ padding: "64px 24px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
+          <div className="eth-fade-in-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: 9999, backgroundColor: "color-mix(in srgb, var(--brand) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--brand) 20%, transparent)", color: "var(--brand)", fontSize: 13, fontWeight: 600, marginBottom: 32 }}>
+            <Sparkles size={14} />
+            <span>Introducing Ethara AI Workspace 2.0</span>
+          </div>
+          
+          <h1 className="eth-fade-in-up" style={{ animationDelay: "0.1s", fontSize: "clamp(2.5rem, 6vw, 4.5rem)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.1, marginBottom: 24, color: "var(--text-primary)" }}>
+            Where <span style={{ background: "linear-gradient(to right, var(--brand), #a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>high-performing</span> teams build the future.
+          </h1>
+          
+          <p className="eth-fade-in-up" style={{ animationDelay: "0.2s", fontSize: "clamp(1.125rem, 2vw, 1.25rem)", color: "var(--text-secondary)", maxWidth: 600, margin: "0 auto 48px", lineHeight: 1.6 }}>
+            The all-in-one productivity suite designed for modern startups. Plan, execute, and ship products faster than ever before.
+          </p>
+          
+          <div className="eth-fade-in-up" style={{ animationDelay: "0.3s", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 16 }}>
+            <Link to={user ? "/dashboard" : "/register"} className="eth-btn eth-btn-primary" style={{ borderRadius: 9999, padding: "16px 32px", fontSize: 16, fontWeight: 600, boxShadow: "0 8px 24px -4px rgba(99, 102, 241, 0.4)", transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
+              {user ? "Go to Dashboard" : "Start your free trial"}
+            </Link>
+            <a href="#features" className="eth-btn eth-btn-secondary" style={{ borderRadius: 9999, padding: "16px 32px", fontSize: 16, fontWeight: 600, ...glassStyle }}>
+              Explore features
+            </a>
+          </div>
+          
+          {/* Hero Image / Dashboard Preview */}
+          <div className="eth-fade-in-up" style={{ animationDelay: "0.5s", marginTop: 80, position: "relative" }}>
+            <div style={{ position: "absolute", inset: -20, background: "linear-gradient(135deg, var(--brand) 0%, transparent 100%)", opacity: 0.1, filter: "blur(40px)", borderRadius: "50%" }} />
+            <div 
+              style={{ 
+                ...glassStyle,
+                border: "1px solid color-mix(in srgb, var(--border) 60%, transparent)",
+                padding: "8px", 
+                borderRadius: 24, 
+                boxShadow: "0 24px 64px -12px rgba(0,0,0,0.15)",
+                position: "relative"
               }}
             >
-              {[
-                { label: "Total Tasks", value: "24", color: "var(--clr-info)" },
-                { label: "Completed", value: "18", color: "var(--clr-success)" },
-                { label: "In Progress", value: "4", color: "var(--clr-warning)" },
-                { label: "Overdue", value: "2", color: "var(--clr-danger)" },
-              ].map((s) => (
-                <div
-                  key={s.label}
-                  className="eth-card"
-                  style={{ padding: 12 }}
-                >
-                  <p style={{ fontSize: 11, color: "var(--text-tertiary)", marginBottom: 4 }}>
-                    {s.label}
-                  </p>
-                  <p style={{ fontSize: 20, fontWeight: 600, color: s.color }}>{s.value}</p>
+              <div style={{ backgroundColor: "var(--bg-primary)", borderRadius: 16, border: "1px solid color-mix(in srgb, var(--border) 40%, transparent)", aspectRatio: "16/9", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                {/* Fake App Header */}
+                <div style={{ height: 48, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", padding: "0 16px", gap: 8, backgroundColor: "var(--bg-secondary)" }}>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <div style={{ height: 10, width: 10, borderRadius: "50%", backgroundColor: "var(--clr-danger)" }} />
+                    <div style={{ height: 10, width: 10, borderRadius: "50%", backgroundColor: "var(--clr-warning)" }} />
+                    <div style={{ height: 10, width: 10, borderRadius: "50%", backgroundColor: "var(--clr-success)" }} />
+                  </div>
+                  <div style={{ margin: "0 auto", height: 24, width: 240, borderRadius: 9999, backgroundColor: "var(--bg-primary)", border: "1px solid var(--border)" }} />
                 </div>
+                {/* Fake App Content */}
+                <div style={{ flex: 1, padding: 24, display: "flex", gap: 24 }}>
+                  <div style={{ width: 200, display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div style={{ height: 20, width: "60%", borderRadius: 9999, backgroundColor: "var(--bg-tertiary)" }} />
+                    <div style={{ height: 20, width: "80%", borderRadius: 9999, backgroundColor: "var(--bg-tertiary)" }} />
+                    <div style={{ height: 20, width: "40%", borderRadius: 9999, backgroundColor: "var(--bg-tertiary)" }} />
+                  </div>
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div style={{ display: "flex", gap: 16 }}>
+                      <div style={{ flex: 1, height: 80, borderRadius: 16, backgroundColor: "var(--brand-muted)" }} />
+                      <div style={{ flex: 1, height: 80, borderRadius: 16, backgroundColor: "var(--clr-info-bg)" }} />
+                      <div style={{ flex: 1, height: 80, borderRadius: 16, backgroundColor: "var(--clr-success-bg)" }} />
+                    </div>
+                    <div style={{ flex: 1, borderRadius: 16, backgroundColor: "var(--bg-tertiary)", opacity: 0.5 }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* LOGO CLOUD */}
+        <section style={{ padding: "64px 24px", borderTop: "1px solid color-mix(in srgb, var(--border) 30%, transparent)", borderBottom: "1px solid color-mix(in srgb, var(--border) 30%, transparent)", backgroundColor: "color-mix(in srgb, var(--bg-secondary) 30%, transparent)" }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
+            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 32 }}>Trusted by innovative teams worldwide</p>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "clamp(32px, 8vw, 64px)", opacity: 0.6, filter: "grayscale(100%)" }}>
+              {["Acme Corp", "GlobalTech", "Nexus", "Stark Ind", "Wayne Ent"].map((company) => (
+                <div key={company} style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.05em", color: "var(--text-primary)" }}>{company}</div>
               ))}
             </div>
+          </div>
+        </section>
 
-            {/* Mock task list */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {[
-                { title: "Design homepage wireframes", status: "Done", done: true, clr: "var(--clr-success)", bg: "var(--clr-success-bg)" },
-                { title: "Set up CI/CD pipeline", status: "In progress", done: false, clr: "var(--clr-warning)", bg: "var(--clr-warning-bg)" },
-                { title: "Write API documentation", status: "To do", done: false, clr: "var(--clr-info)", bg: "var(--clr-info-bg)" },
-              ].map((t) => (
-                <div
-                  key={t.title}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    padding: "10px 12px",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: "var(--bg-secondary)",
-                    border: "1px solid var(--border)",
+        {/* BENTO GRID FEATURES */}
+        <section id="features" style={{ padding: "120px 24px" }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 64 }}>
+              <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, letterSpacing: "-0.03em", marginBottom: 16 }}>Everything you need to ship faster</h2>
+              <p style={{ fontSize: 18, color: "var(--text-secondary)", maxWidth: 600, margin: "0 auto" }}>Say goodbye to scattered tools. Ethara AI brings your tasks, docs, and team together.</p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+              {features.map((feature, idx) => (
+                <div 
+                  key={feature.title} 
+                  className="eth-fade-in-up" 
+                  style={{ 
+                    ...glassStyle,
+                    animationDelay: `${idx * 0.1}s`, 
+                    padding: 32, 
+                    borderRadius: 32,
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-8px)";
+                    e.currentTarget.style.boxShadow = "0 24px 48px -12px rgba(0,0,0,0.1)";
+                    e.currentTarget.style.borderColor = "var(--brand-subtle)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 8px 32px -4px rgba(0,0,0,0.03)";
+                    e.currentTarget.style.borderColor = "color-mix(in srgb, var(--border) 50%, transparent)";
                   }}
                 >
-                  <div
-                    style={{
-                      height: 16,
-                      width: 16,
-                      borderRadius: "50%",
-                      border: t.done ? "none" : "2px solid var(--border)",
-                      backgroundColor: t.done ? "var(--clr-success)" : "transparent",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {t.done && <CheckCircle2 size={10} color="#fff" />}
+                  <div style={{ height: 48, width: 48, borderRadius: "50%", backgroundColor: "var(--brand-muted)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24, color: "var(--brand)", boxShadow: "inset 0 2px 4px rgba(255,255,255,0.5)" }}>
+                    <feature.icon size={24} />
                   </div>
-                  <span
-                    style={{
-                      flex: 1,
-                      fontSize: 14,
-                      color: t.done ? "var(--text-tertiary)" : "var(--text-primary)",
-                      textDecoration: t.done ? "line-through" : "none",
-                    }}
-                  >
-                    {t.title}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      padding: "2px 8px",
-                      borderRadius: 999,
-                      backgroundColor: t.bg,
-                      color: t.clr,
-                    }}
-                  >
-                    {t.status}
-                  </span>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>{feature.title}</h3>
+                  <p style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{feature.description}</p>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FEATURES */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 24px 80px" }}>
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <h2
-            style={{
-              fontSize: "clamp(1.5rem, 3vw, 2rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.025em",
-              marginBottom: 12,
-            }}
-          >
-            Everything your team needs
-          </h2>
-          <p style={{ color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto" }}>
-            From task tracking to team permissions — built with care for teams
-            that move fast.
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: 16,
-          }}
-        >
-          {features.map((f) => (
-            <div key={f.title} className="eth-card-hover" style={{ padding: 24 }}>
-              <div
-                style={{
-                  height: 40,
-                  width: 40,
-                  borderRadius: "var(--radius-md)",
-                  backgroundColor: "var(--brand-muted)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--brand)",
-                  marginBottom: 16,
-                }}
-              >
-                <f.icon size={20} />
-              </div>
-              <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>
-                {f.title}
-              </h3>
-              <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                {f.desc}
-              </p>
+        {/* CTA SECTION */}
+        <section style={{ padding: "120px 24px", position: "relative" }}>
+          <div style={{ maxWidth: 1000, margin: "0 auto", ...glassStyle, padding: "64px 24px", borderRadius: 40, textAlign: "center", backgroundColor: "color-mix(in srgb, var(--brand-muted) 30%, transparent)", border: "1px solid color-mix(in srgb, var(--brand) 20%, transparent)", overflow: "hidden", position: "relative" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, var(--brand), #a855f7)" }} />
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, background: "radial-gradient(circle, var(--brand) 0%, transparent 70%)", opacity: 0.1, filter: "blur(60px)", zIndex: 0 }} />
+            
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, letterSpacing: "-0.03em", marginBottom: 16 }}>Ready to transform your workflow?</h2>
+              <p style={{ fontSize: 18, color: "var(--text-secondary)", marginBottom: 40, maxWidth: 500, margin: "0 auto 40px" }}>Join thousands of teams already using Ethara AI to do their best work.</p>
+              
+              <Link to="/register" className="eth-btn eth-btn-primary" style={{ borderRadius: 9999, padding: "16px 40px", fontSize: 18, fontWeight: 600, boxShadow: "0 8px 32px -4px rgba(99, 102, 241, 0.5)", transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
+                Get started for free
+              </Link>
+              <p style={{ marginTop: 16, fontSize: 13, color: "var(--text-tertiary)" }}>No credit card required. 14-day free trial on Pro plans.</p>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 24px 80px" }}>
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <h2
-            style={{
-              fontSize: "clamp(1.5rem, 3vw, 2rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.025em",
-              marginBottom: 12,
-            }}
-          >
-            Up and running in minutes
-          </h2>
-          <p style={{ color: "var(--text-secondary)", maxWidth: 420, margin: "0 auto" }}>
-            No complicated setup. Create an account, invite your team, and start
-            tracking work right away.
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: 16,
-          }}
-        >
-          {steps.map((s) => (
-            <div key={s.num} className="eth-card" style={{ padding: 24, textAlign: "center" }}>
-              <span
-                style={{
-                  display: "inline-block",
-                  fontSize: 28,
-                  fontWeight: 700,
-                  color: "var(--brand)",
-                  opacity: 0.4,
-                  marginBottom: 12,
-                }}
-              >
-                {s.num}
-              </span>
-              <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>
-                {s.title}
-              </h3>
-              <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 24px 80px" }}>
-        <div
-          style={{
-            borderRadius: "var(--radius-xl)",
-            backgroundColor: "var(--brand)",
-            padding: "48px 32px",
-            textAlign: "center",
-          }}
-        >
-          <h2 style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)", fontWeight: 700, color: "#fff", marginBottom: 12 }}>
-            Ready to get your team organized?
-          </h2>
-          <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: 24, maxWidth: 420, margin: "0 auto 24px", fontSize: 14 }}>
-            Join teams that use Ethara AI to ship better software, faster.
-          </p>
-          <Link
-            to="/register"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              backgroundColor: "#fff",
-              color: "var(--brand)",
-              fontWeight: 600,
-              fontSize: 14,
-              padding: "12px 24px",
-              borderRadius: "var(--radius-md)",
-              textDecoration: "none",
-            }}
-          >
-            Create your free account <ArrowRight size={16} />
-          </Link>
-        </div>
-      </section>
+          </div>
+        </section>
+      </main>
 
       {/* FOOTER */}
-      <footer style={{ borderTop: "1px solid var(--border)", padding: "32px 0" }}>
-        <div
-          style={{
-            maxWidth: 960,
-            margin: "0 auto",
-            padding: "0 24px",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 16,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                height: 24,
-                width: 24,
-                borderRadius: 6,
-                backgroundColor: "var(--brand)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span style={{ color: "#fff", fontSize: 10, fontWeight: 700 }}>E</span>
+      <footer style={{ borderTop: "1px solid color-mix(in srgb, var(--border) 30%, transparent)", padding: "64px 24px", backgroundColor: "color-mix(in srgb, var(--bg-secondary) 50%, transparent)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 48 }}>
+          <div style={{ maxWidth: 300 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+              <div style={{ height: 24, width: 24, borderRadius: 8, background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Sparkles size={12} color="#fff" />
+              </div>
+              <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.03em" }}>Ethara AI</span>
             </div>
-            <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-              © {new Date().getFullYear()} Ethara AI
-            </span>
+            <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>Building the ultimate productivity OS for teams that want to move fast and stay aligned.</p>
           </div>
-          <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--text-tertiary)" }}>
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
-            <a href="#">Contact</a>
+          
+          <div style={{ display: "flex", gap: 64, flexWrap: "wrap" }}>
+            {[
+              { title: "Product", links: ["Features", "Integrations", "Pricing", "Changelog"] },
+              { title: "Company", links: ["About Us", "Careers", "Blog", "Contact"] },
+              { title: "Legal", links: ["Privacy Policy", "Terms of Service", "Cookie Policy"] }
+            ].map((col) => (
+              <div key={col.title} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <h4 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>{col.title}</h4>
+                {col.links.map((link) => (
+                  <a key={link} href="#" style={{ fontSize: 14, color: "var(--text-secondary)", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-secondary)"}>{link}</a>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ maxWidth: 1200, margin: "48px auto 0", paddingTop: 24, borderTop: "1px solid color-mix(in srgb, var(--border) 30%, transparent)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+          <p style={{ fontSize: 14, color: "var(--text-tertiary)" }}>© {new Date().getFullYear()} Ethara AI. All rights reserved.</p>
+          <div style={{ display: "flex", gap: 16 }}>
+            {["Twitter", "GitHub", "LinkedIn"].map((social) => (
+              <a key={social} href="#" style={{ fontSize: 14, color: "var(--text-tertiary)", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-tertiary)"}>{social}</a>
+            ))}
           </div>
         </div>
       </footer>
