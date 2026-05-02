@@ -7,28 +7,42 @@ import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
           <App />
-          <Toaster 
-            position="top-right" 
+          <Toaster
+            position="bottom-right"
             toastOptions={{
+              duration: 3000,
               style: {
-                background: 'var(--bg-secondary)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '16px',
-                padding: '16px',
-                fontWeight: '600',
-                boxShadow: 'var(--card-shadow)',
+                background: "var(--card-bg)",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border-primary)",
+                borderRadius: "var(--radius-md)",
+                padding: "12px 16px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                boxShadow: "var(--card-shadow-hover)",
+              },
+              success: {
+                iconTheme: {
+                  primary: "var(--success)",
+                  secondary: "white",
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: "var(--danger)",
+                  secondary: "white",
+                },
               },
             }}
           />
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
-  </StrictMode>,
-)
+  </StrictMode>
+);

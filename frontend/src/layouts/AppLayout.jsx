@@ -1,104 +1,182 @@
-import { useState } from "react";
-import { LayoutDashboard, FolderKanban, ListTodo, LogOut, Menu, X, User } from "lucide-react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  LayoutDashboard,
+  FolderKanban,
+  ListTodo,
+  LogOut,
+  Menu,
+  X,
+  Settings,
+  ChevronDown,
+  Search,
+  Bell,
+} from "lucide-react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "../components/ThemeToggle";
-import UserMenu from "../components/UserMenu";
 
 const AppLayout = () => {
   const { user, logout } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const location = useLocation();
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
-  const NavItem = ({ to, icon: Icon, children }) => (
-    <NavLink
-      to={to}
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={({ isActive }) =>
-        `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
-          isActive
-            ? "bg-[var(--accent-primary)] text-white shadow-lg shadow-indigo-500/30"
-            : "text-[var(--text-secondary)] hover:bg-[var(--bg-primary)] hover:text-[var(--text-primary)]"
-        }`
+  // Close sidebar on Escape
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setSidebarOpen(false);
+        setSearchOpen(false);
       }
-    >
-      <Icon size={18} />
-      {children}
-    </NavLink>
-  );
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const navItems = [
+    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { to: "/tasks", icon: ListTodo, label: "Tasks" },
+    ...(user?.role === "admin"
+      ? [{ to: "/projects", icon: FolderKanban, label: "Projects" }]
+      : []),
+    { to: "/settings", icon: Settings, label: "Settings" },
+  ];
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      {/* Header */}
-      <header className="glass-effect sticky top-0 z-50 h-[var(--header-height)] border-b border-[var(--border-color)] px-4 lg:px-8">
-        <div className="mx-auto flex h-full max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleMobileMenu}
-              className="flex h-10 w-10 items-center justify-center rounded-lg hover:bg-[var(--bg-primary)] lg:hidden"
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-            <Link to="/dashboard" className="flex items-center gap-2 text-xl font-bold tracking-tight">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-primary)] text-white">
-                E
-              </div>
-              <span>Ethara AI</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <div className="hidden h-8 w-[1px] bg-[var(--border-color)] md:block"></div>
-            <UserMenu />
-          </div>
+    <div className="min-h-screen bg-[var(--bg-primary)]">
+      {/* ====== SIDEBAR ====== */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-[var(--sidebar-width)] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Logo */}
+        <div className="h-[var(--header-height)] flex items-center px-5 border-b border-[var(--border-primary)]">
+          <Link to="/dashboard" className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded-lg bg-[var(--brand-primary)] flex items-center justify-center">
+              <span className="text-white text-xs font-bold">E</span>
+            </div>
+            <span className="text-sm font-semibold text-[var(--text-primary)]">
+              Ethara AI
+            </span>
+          </Link>
         </div>
-      </header>
 
-      <div className="mx-auto flex max-w-7xl">
-        {/* Sidebar */}
-        <aside
-          className={`fixed inset-y-0 left-0 z-40 w-[var(--sidebar-width)] transform border-r border-[var(--border-color)] bg-[var(--bg-secondary)] transition-transform duration-300 lg:static lg:translate-x-0 ${
-            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="flex h-full flex-col p-4">
-            <div className="mb-8 mt-4 px-2 lg:hidden">
-              <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)]">Menu</p>
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+          <p className="px-3 mb-2 text-[0.6875rem] font-medium text-[var(--text-tertiary)] uppercase tracking-wider">
+            Navigation
+          </p>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] text-[0.8125rem] font-medium transition-colors duration-150 ${
+                  isActive
+                    ? "bg-[var(--brand-muted)] text-[var(--brand-primary)]"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]"
+                }`
+              }
+            >
+              <item.icon size={16} />
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* User section */}
+        <div className="border-t border-[var(--border-primary)] p-3">
+          <div className="flex items-center gap-2.5 px-2 py-2 rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] transition-colors cursor-pointer">
+            <div className="h-8 w-8 rounded-full bg-[var(--brand-muted)] flex items-center justify-center text-xs font-semibold text-[var(--brand-primary)]">
+              {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
-            
-            <nav className="flex-1 space-y-2">
-              <NavItem to="/dashboard" icon={LayoutDashboard}>Dashboard</NavItem>
-              {user?.role === "admin" && (
-                <NavItem to="/projects" icon={FolderKanban}>Projects</NavItem>
-              )}
-              <NavItem to="/tasks" icon={ListTodo}>Tasks</NavItem>
-            </nav>
-
-            <div className="mt-auto border-t border-[var(--border-color)] pt-4">
-              <button
-                onClick={logout}
-                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition-all hover:bg-red-50 dark:hover:bg-red-950/20"
-              >
-                <LogOut size={18} />
-                Logout
-              </button>
+            <div className="flex-1 min-w-0">
+              <p className="text-[0.8125rem] font-medium text-[var(--text-primary)] truncate">
+                {user?.name}
+              </p>
+              <p className="text-[0.6875rem] text-[var(--text-tertiary)] truncate">
+                {user?.email}
+              </p>
             </div>
           </div>
-        </aside>
+          <button
+            onClick={logout}
+            className="mt-1 flex w-full items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] text-[0.8125rem] font-medium text-[var(--danger)] hover:bg-[var(--danger-muted)] transition-colors"
+          >
+            <LogOut size={16} />
+            Sign out
+          </button>
+        </div>
+      </aside>
 
-        {/* Overlay */}
-        {isMobileMenuOpen && (
-          <div
-            className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm lg:hidden"
-            onClick={() => setIsMobileMenuOpen(false)}
-          ></div>
-        )}
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/30 backdrop-blur-[2px] lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-        {/* Main Content */}
-        <main className="min-h-[calc(100vh-var(--header-height))] flex-1 p-4 lg:p-8 animate-fade-in">
-          <Outlet />
+      {/* ====== MAIN AREA ====== */}
+      <div className="lg:pl-[var(--sidebar-width)]">
+        {/* Header */}
+        <header className="sticky top-0 z-20 h-[var(--header-height)] bg-[var(--bg-secondary)]/80 backdrop-blur-md border-b border-[var(--border-primary)] px-4 lg:px-6">
+          <div className="h-full flex items-center justify-between gap-4">
+            {/* Left side */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden h-8 w-8 flex items-center justify-center rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+                aria-label="Toggle sidebar"
+              >
+                {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+
+              {/* Breadcrumb-style page title */}
+              <div className="hidden sm:flex items-center gap-1.5 text-sm text-[var(--text-secondary)]">
+                <span className="text-[var(--text-tertiary)]">Ethara AI</span>
+                <span className="text-[var(--text-tertiary)]">/</span>
+                <span className="font-medium text-[var(--text-primary)]">
+                  {navItems.find((i) => i.to === location.pathname)?.label ||
+                    "Page"}
+                </span>
+              </div>
+            </div>
+
+            {/* Right side */}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+
+              <button className="relative h-8 w-8 flex items-center justify-center rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] transition-colors">
+                <Bell size={16} />
+                <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-[var(--brand-primary)]" />
+              </button>
+
+              <div className="hidden sm:block h-5 w-px bg-[var(--border-primary)] mx-1" />
+
+              <div className="hidden sm:flex items-center gap-2 pl-1">
+                <div className="h-7 w-7 rounded-full bg-[var(--brand-muted)] flex items-center justify-center text-xs font-semibold text-[var(--brand-primary)]">
+                  {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+                <span className="text-[0.8125rem] font-medium text-[var(--text-primary)]">
+                  {user?.name?.split(" ")[0]}
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main className="p-4 lg:p-6 animate-fade-in">
+          <div className="max-w-6xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LogIn, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "../components/ThemeToggle";
 
@@ -15,74 +15,107 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      await login(form);
-      navigate("/dashboard");
+      const success = await login(form);
+      if (success) navigate("/dashboard");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 bg-[var(--bg-primary)] overflow-hidden">
-      {/* Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div className="min-h-screen flex bg-[var(--bg-primary)]">
+      {/* Left — Form */}
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-12">
+        <div className="w-full max-w-sm mx-auto">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 mb-10">
+            <div className="h-7 w-7 rounded-lg bg-[var(--brand-primary)] flex items-center justify-center">
+              <span className="text-white text-xs font-bold">E</span>
+            </div>
+            <span className="text-sm font-semibold">Ethara AI</span>
+          </Link>
 
-      <div className="absolute top-8 right-8 z-50">
-        <ThemeToggle />
-      </div>
+          <h1 className="text-xl font-semibold tracking-tight mb-1">
+            Welcome back
+          </h1>
+          <p className="text-sm text-[var(--text-secondary)] mb-8">
+            Sign in to your workspace to continue.
+          </p>
 
-      <div className="w-full max-w-[440px] z-10 animate-fade-in">
-        <div className="text-center mb-8">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--accent-primary)] text-white shadow-xl shadow-indigo-500/20 mb-6">
-            <LogIn size={32} />
-          </div>
-          <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome Back</h1>
-          <p className="text-[var(--text-secondary)] font-medium">Enter your credentials to access Ethara AI</p>
-        </div>
-
-        <div className="premium-card p-8 md:p-10">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold ml-1">Email Address</label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] group-focus-within:text-[var(--accent-primary)] transition-colors">
-                  <Mail size={18} />
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="login-email"
+                className="text-[0.8125rem] font-medium"
+              >
+                Email
+              </label>
+              <div className="relative">
+                <Mail
+                  size={15}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]"
+                />
                 <input
+                  id="login-email"
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="you@company.com"
                   required
                   value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/20 focus:border-[var(--accent-primary)] transition-all font-medium"
+                  onChange={(e) =>
+                    setForm({ ...form, email: e.target.value })
+                  }
+                  className="input-base pl-9"
+                  autoComplete="email"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between ml-1">
-                <label className="text-sm font-semibold">Password</label>
-                <Link to="#" className="text-xs font-bold text-[var(--accent-primary)] hover:underline">Forgot password?</Link>
+            {/* Password */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="login-password"
+                  className="text-[0.8125rem] font-medium"
+                >
+                  Password
+                </label>
+                <button
+                  type="button"
+                  className="text-xs text-[var(--brand-primary)] hover:underline"
+                  tabIndex={-1}
+                >
+                  Forgot password?
+                </button>
               </div>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] group-focus-within:text-[var(--accent-primary)] transition-colors">
-                  <Lock size={18} />
-                </div>
+              <div className="relative">
+                <Lock
+                  size={15}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]"
+                />
                 <input
+                  id="login-password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   required
                   value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl py-3.5 pl-12 pr-12 outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/20 focus:border-[var(--accent-primary)] transition-all font-medium"
+                  onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                  }
+                  className="input-base pl-9 pr-9"
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                  tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? (
+                    <EyeOff size={15} />
+                  ) : (
+                    <Eye size={15} />
+                  )}
                 </button>
               </div>
             </div>
@@ -90,32 +123,55 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="btn btn-primary w-full py-2.5"
             >
               {loading ? (
                 <>
-                  <Loader2 size={20} className="animate-spin" />
-                  Authenticating...
+                  <Loader2 size={16} className="animate-spin" />
+                  Signing in...
                 </>
               ) : (
-                "Sign In to Workspace"
+                <>
+                  Sign in
+                  <ArrowRight size={14} />
+                </>
               )}
             </button>
           </form>
 
-          <div className="mt-8 pt-8 border-t border-[var(--border-color)] text-center">
-            <p className="text-sm text-[var(--text-secondary)] font-medium">
-              Don't have an account?{" "}
-              <Link to="/register" className="text-[var(--accent-primary)] font-bold hover:underline ml-1">
-                Create one now
-              </Link>
-            </p>
-          </div>
+          <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
+            Don&apos;t have an account?{" "}
+            <Link
+              to="/register"
+              className="text-[var(--brand-primary)] font-medium hover:underline"
+            >
+              Create one
+            </Link>
+          </p>
         </div>
+      </div>
 
-        <p className="mt-8 text-center text-xs text-[var(--text-secondary)] font-medium">
-          &copy; {new Date().getFullYear()} Ethara AI. All rights reserved.
-        </p>
+      {/* Right — Visual panel (desktop only) */}
+      <div className="hidden lg:flex flex-1 bg-[var(--brand-primary)] items-center justify-center p-12 relative overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full border border-white/10" />
+        <div className="absolute bottom-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full border border-white/10" />
+        <div className="absolute top-[20%] left-[10%] w-[200px] h-[200px] rounded-full bg-white/5" />
+
+        <div className="relative z-10 max-w-md text-center">
+          <h2 className="text-2xl font-semibold text-white mb-4">
+            Manage your team&apos;s work in one place
+          </h2>
+          <p className="text-white/60 text-sm leading-relaxed">
+            Track tasks, organize projects, and collaborate with your team —
+            all from a single, beautifully designed workspace.
+          </p>
+        </div>
+      </div>
+
+      {/* Theme toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
       </div>
     </div>
   );
